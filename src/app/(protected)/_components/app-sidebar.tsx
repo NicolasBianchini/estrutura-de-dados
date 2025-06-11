@@ -2,10 +2,9 @@
 
 import {
   CalendarDays,
-  Gem,
   LayoutDashboard,
   LogOut,
-  Stethoscope,
+  LucideScale,
   UsersRound,
 } from "lucide-react";
 import Image from "next/image";
@@ -45,9 +44,9 @@ const items = [
     icon: CalendarDays,
   },
   {
-    title: "Médicos",
+    title: "Advogados",
     url: "/doctors",
-    icon: Stethoscope,
+    icon: LucideScale,
   },
   {
     title: "Pacientes",
@@ -73,7 +72,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
-        <Image src="/logo.svg" alt="Doutor Agenda" width={136} height={28} />
+        <Image src="/logo.svg.png" alt="FGJN" width={100} height={28} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -94,7 +93,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Outros</SidebarGroupLabel>
+          <SidebarGroupLabel></SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -103,8 +102,7 @@ export function AppSidebar() {
                   isActive={pathname === "/subscription"}
                 >
                   <Link href="/subscription">
-                    <Gem />
-                    <span>Assinatura</span>
+                    <span></span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

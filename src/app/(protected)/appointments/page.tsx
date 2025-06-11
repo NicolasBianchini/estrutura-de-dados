@@ -1,7 +1,3 @@
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
 import { DataTable } from "@/components/ui/data-table";
 import {
   PageActions,
@@ -12,41 +8,56 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { db } from "@/db";
-import { appointmentsTable, doctorsTable, patientsTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 import AddAppointmentButton from "./_components/add-appointment-button";
 import { appointmentsTableColumns } from "./_components/table-columns";
 
 const AppointmentsPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    redirect("/authentication");
-  }
-  if (!session.user.clinic) {
-    redirect("/clinic-form");
-  }
-  if (!session.user.plan) {
-    redirect("/new-subscription");
-  }
-  const [patients, doctors, appointments] = await Promise.all([
-    db.query.patientsTable.findMany({
-      where: eq(patientsTable.clinicId, session.user.clinic.id),
-    }),
-    db.query.doctorsTable.findMany({
-      where: eq(doctorsTable.clinicId, session.user.clinic.id),
-    }),
-    db.query.appointmentsTable.findMany({
-      where: eq(appointmentsTable.clinicId, session.user.clinic.id),
-      with: {
-        patient: true,
-        doctor: true,
-      },
-    }),
-  ]);
+  // Dados mockados
+  const patients = [
+    { id: "1", name: "L7NNON" },
+    { id: "2", name: "TZ DA CORONEL" },
+    { id: "3", name: "TRAVIS SCOTT" },
+    { id: "4", name: "LUDMILLA" },
+  ];
+
+  const doctors = [
+    { id: "1", name: "Dr. Felipe Vargas" },
+    { id: "2", name: "Dr. João Belém" },
+    { id: "3", name: "Dr. Gabriel Klein" },
+    { id: "4", name: "Dr. Nicolas Bianchini" },
+  ];
+
+  const appointments = [
+    {
+      id: "1",
+      date: new Date().toISOString(),
+      doctor: { name: "Dr. Felipe Vargas" },
+      patient: { name: "L7NNON" },
+      appointmentPriceInCents: 15000,
+    },
+    {
+      id: "2",
+      date: new Date().toISOString(),
+      doctor: { name: "Dr. João Belém" },
+      patient: { name: "TRAVIS SCOTT" },
+      appointmentPriceInCents: 18000,
+    },
+     {
+      id: "3",
+      date: new Date().toISOString(),
+      doctor: { name: "Dr. Gabriel Klein" },
+      patient: { name: "TZ DA CORONEL" },
+      appointmentPriceInCents: 18000,
+    },
+     {
+      id: "4",
+      date: new Date().toISOString(),
+      doctor: { name: "Dr. Nicolas Bianchini" },
+      patient: { name: "LUDMILLA" },
+      appointmentPriceInCents: 18000,
+    },
+  ];
 
   return (
     <PageContainer>

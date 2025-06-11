@@ -1,7 +1,5 @@
 import dayjs from "dayjs";
 import { Calendar } from "lucide-react";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
@@ -15,7 +13,6 @@ import {
   PageTitle,
 } from "@/components/ui/page-container";
 import { getDashboard } from "@/data/get-dashboard";
-import { auth } from "@/lib/auth";
 
 import { appointmentsTableColumns } from "../appointments/_components/table-columns";
 import AppointmentsChart from "./_components/appointments-chart";
@@ -32,24 +29,12 @@ interface DashboardPageProps {
 }
 
 const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    redirect("/authentication");
-  }
-  if (!session.user.clinic) {
-    redirect("/clinic-form");
-  }
-  if (!session.user.plan) {
-    redirect("/new-subscription");
-  }
   const { from, to } = await searchParams;
-  if (!from || !to) {
-    redirect(
-      `/dashboard?from=${dayjs().format("YYYY-MM-DD")}&to=${dayjs().add(1, "month").format("YYYY-MM-DD")}`,
-    );
-  }
+
+  const validFrom = from || dayjs().format("YYYY-MM-DD");
+  const validTo = to || dayjs().add(1, "month").format("YYYY-MM-DD");
+
+  // Remover dependência da sessão, usar valores estáticos fictícios ou mockados
   const {
     totalRevenue,
     totalAppointments,
@@ -60,12 +45,12 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
     todayAppointments,
     dailyAppointmentsData,
   } = await getDashboard({
-    from,
-    to,
+    from: validFrom,
+    to: validTo,
     session: {
       user: {
         clinic: {
-          id: session.user.clinic.id,
+          id: "mock-clinic-id", // valor fictício
         },
       },
     },

@@ -7,6 +7,7 @@ import {
   Hand,
   Heart,
   Hospital,
+  Scale,
   Stethoscope,
 } from "lucide-react";
 
@@ -39,7 +40,7 @@ const getSpecialtyIcon = (specialty: string) => {
   if (specialtyLower.includes("oftalmolog")) return Eye;
   if (specialtyLower.includes("neurolog")) return Brain;
 
-  return Stethoscope;
+  return Scale;
 };
 
 export default function TopSpecialties({

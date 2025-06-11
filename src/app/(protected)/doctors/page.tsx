@@ -1,6 +1,4 @@
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+
 
 import {
   PageActions,
@@ -11,35 +9,61 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { db } from "@/db";
-import { doctorsTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 import AddDoctorButton from "./_components/add-doctor-button";
 import DoctorCard from "./_components/doctor-card";
 
 const DoctorsPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    redirect("/authentication");
-  }
-  if (!session.user.plan) {
-    redirect("/new-subscription");
-  }
-  if (!session.user.clinic) {
-    redirect("/clinic-form");
-  }
-  const doctors = await db.query.doctorsTable.findMany({
-    where: eq(doctorsTable.clinicId, session.user.clinic.id),
-  });
+  // Dados mockados
+  const doctors = [
+  {
+    id: "1",
+    name: "Dr. João Belém",
+    specialty: "Direito Civil",
+    avatarImageUrl: "/WhatsApp Image 2025-06-11 at 18.19.26.jpeg",
+    availableFromTime: "08:00",
+    availableToTime: "17:00",
+    availableFromWeekDay: 1, // Segunda
+    availableToWeekDay: 5,   // Sexta
+  },
+  {
+    id: "2",
+    name: "Dr. Felipe Vargas",
+    specialty: "Direito Desportivo",
+    avatarImageUrl: "https://i.pravatar.cc/150?img=8",
+    availableFromTime: "09:00",
+    availableToTime: "16:00",
+    availableFromWeekDay: 1,
+    availableToWeekDay: 5,
+  },
+  {
+    id: "3",
+    name: "Dr. Gabriel Klein",
+    specialty: "Direito Digital",
+    avatarImageUrl: "https://i.pravatar.cc/150?img=12",
+    availableFromTime: "08:00",
+    availableToTime: "17:00",
+    availableFromWeekDay: 1, // Segunda
+    availableToWeekDay: 5,   // Sexta
+  },
+  {
+    id: "4",
+    name: "Dr. Nicolas Bianchini",
+    specialty: "Direito Administrativo",
+    avatarImageUrl: "https://i.pravatar.cc/150?img=12",
+    availableFromTime: "08:00",
+    availableToTime: "17:00",
+    availableFromWeekDay: 1, // Segunda
+    availableToWeekDay: 5,   // Sexta
+  },
+];
+
   return (
     <PageContainer>
       <PageHeader>
         <PageHeaderContent>
-          <PageTitle>Médicos</PageTitle>
-          <PageDescription>Gerencie os médicos da sua clínica</PageDescription>
+          <PageTitle>Advogados</PageTitle>
+          <PageDescription>Gerencie os advogados da sua clínica</PageDescription>
         </PageHeaderContent>
         <PageActions>
           <AddDoctorButton />

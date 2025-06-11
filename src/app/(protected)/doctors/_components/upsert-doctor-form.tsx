@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/select";
 import { doctorsTable } from "@/db/schema";
 
-import { medicalSpecialties } from "../_constants";
+import { lawyerSpecialties } from "../_constants";
 
 const formSchema = z
   .object({
@@ -113,11 +113,11 @@ const UpsertDoctorForm = ({
 
   const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
-      toast.success("Médico adicionado com sucesso.");
+      toast.success("Advogado adicionado com sucesso.");
       onSuccess?.();
     },
     onError: () => {
-      toast.error("Erro ao adicionar médico.");
+      toast.error("Erro ao adicionar advogado.");
     },
   });
 
@@ -134,11 +134,11 @@ const UpsertDoctorForm = ({
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>{doctor ? doctor.name : "Adicionar médico"}</DialogTitle>
+        <DialogTitle>{doctor ? doctor.name : "Adicionar advogado"}</DialogTitle>
         <DialogDescription>
           {doctor
-            ? "Edite as informações desse médico."
-            : "Adicione um novo médico."}
+            ? "Edite as informações desse advogado."
+            : "Adicione um novo advogado."}
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
@@ -172,7 +172,7 @@ const UpsertDoctorForm = ({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {medicalSpecialties.map((specialty) => (
+                    {lawyerSpecialties.map((specialty) => (
                       <SelectItem key={specialty.value} value={specialty.value}>
                         {specialty.label}
                       </SelectItem>

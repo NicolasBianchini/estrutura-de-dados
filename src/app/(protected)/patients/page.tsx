@@ -1,7 +1,3 @@
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
 import { DataTable } from "@/components/ui/data-table";
 import {
   PageActions,
@@ -12,29 +8,39 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { db } from "@/db";
-import { patientsTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 import AddPatientButton from "./_components/add-patient-button";
 import { patientsTableColumns } from "./_components/table-columns";
 
 const PatientsPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    redirect("/authentication");
-  }
-  if (!session.user.clinic) {
-    redirect("/clinic-form");
-  }
-  if (!session.user.plan) {
-    redirect("/new-subscription");
-  }
-  const patients = await db.query.patientsTable.findMany({
-    where: eq(patientsTable.clinicId, session.user.clinic.id),
-  });
+  // Mock de pacientes
+  const patients = [
+    {
+      id: "1",
+      name: "L7NNON",
+      email: "l7@gmail.com",
+      phone: "(11) 98765-4321",
+    },
+    {
+      id: "2",
+      name: "TRAVIS SCOTT",
+      email: "travis@gmail.com",
+      phone: "(21) 91234-5678",
+    },
+    {
+      id: "3",
+      name: "TZ DA CORONEL",
+      email: "tz@gmail.com",
+      phone: "(31) 99876-5432",
+    },
+     {
+      id: "4",
+      name: "LUDMILLA",
+      email: "ludmilla@gmail.com",
+      phone: "(31) 93476-5432",
+    },
+  ];
+
   return (
     <PageContainer>
       <PageHeader>

@@ -48,10 +48,10 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
     useState(false);
   const deleteDoctorAction = useAction(deleteDoctor, {
     onSuccess: () => {
-      toast.success("Médico deletado com sucesso.");
+      toast.success("Advogado deletado com sucesso.");
     },
     onError: () => {
-      toast.error("Erro ao deletar médico.");
+      toast.error("Erro ao deletar advogado.");
     },
   });
   const handleDeleteDoctorClick = () => {
@@ -117,16 +117,16 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
           <AlertDialogTrigger asChild>
             <Button variant="outline" className="w-full">
               <TrashIcon />
-              Deletar médico
+              Deletar advogado
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                Tem certeza que deseja deletar esse médico?
+                Tem certeza que deseja deletar esse advogado?
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Essa ação não pode ser revertida. Isso irá deletar o médico e
+                Essa ação não pode ser revertida. Isso irá deletar o advogado e
                 todas as consultas agendadas.
               </AlertDialogDescription>
             </AlertDialogHeader>

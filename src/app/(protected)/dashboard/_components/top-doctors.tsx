@@ -1,4 +1,4 @@
-import { Stethoscope } from "lucide-react";
+import { Scale, scale } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -19,8 +19,8 @@ export default function TopDoctors({ doctors }: TopDoctorsProps) {
       <CardContent>
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Stethoscope className="text-muted-foreground" />
-            <CardTitle className="text-base">Médicos</CardTitle>
+            <Scale className="text-muted-foreground" />
+            <CardTitle className="text-base">Advogados</CardTitle>
           </div>
         </div>
 

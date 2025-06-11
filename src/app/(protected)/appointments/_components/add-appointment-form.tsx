@@ -53,7 +53,7 @@ const formSchema = z.object({
     message: "Paciente é obrigatório.",
   }),
   doctorId: z.string().min(1, {
-    message: "Médico é obrigatório.",
+    message: "Advogado é obrigatório.",
   }),
   appointmentPrice: z.number().min(1, {
     message: "Valor da consulta é obrigatório.",
@@ -207,7 +207,7 @@ const AddAppointmentForm = ({
             name="doctorId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Médico</FormLabel>
+                <FormLabel>Advogado</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
