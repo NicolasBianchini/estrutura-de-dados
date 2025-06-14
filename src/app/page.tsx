@@ -43,10 +43,10 @@ export default function Home() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            Doutor Agenda
+            FGJN Advocacia
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Gerencie seus agendamentos de forma simples e eficiente
+            Gerencie e acompanhe atendimentos jurídicos de forma simples, segura e eficiente.
           </p>
         </div>
 
