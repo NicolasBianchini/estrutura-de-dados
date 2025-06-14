@@ -1,17 +1,32 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
 
-import { auth } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-import { SubscriptionPlan } from "../(protected)/subscription/_components/subscription-plan";
+import { useAuth } from "@/hooks/use-firebase-auth";
 
-export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session) {
-    redirect("/login");
+export default function NewSubscriptionPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/");
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-6">
       <div className="mb-8 w-full max-w-3xl text-center">
@@ -37,7 +52,13 @@ export default async function Home() {
       </div>
 
       <div className="w-full max-w-md">
-        <SubscriptionPlan userEmail={session.user.email} />
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Planos em breve</h2>
+          <p className="text-gray-600">
+            Estamos preparando os melhores planos para você.
+            Entre em contato: {user.email}
+          </p>
+        </div>
       </div>
 
       <div className="mt-8 max-w-lg text-center">

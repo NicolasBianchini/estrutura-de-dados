@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Copy } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -33,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { doctorsTable } from "@/db/schema";
 
 import { lawyerSpecialties } from "../_constants";
 
@@ -56,6 +56,7 @@ const formSchema = z
     availableToTime: z.string().min(1, {
       message: "Hora de término é obrigatória.",
     }),
+    bio: z.string().max(500, { message: "A descrição deve ter no máximo 500 caracteres." }).optional(),
   })
   .refine(
     (data) => {
@@ -68,9 +69,23 @@ const formSchema = z
     },
   );
 
+interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+  email: string;
+  avatarImageUrl?: string;
+  availableFromTime: string;
+  availableToTime: string;
+  availableFromWeekDay: number;
+  availableToWeekDay: number;
+  appointmentPrice?: string;
+  bio?: string;
+}
+
 interface UpsertDoctorFormProps {
   isOpen: boolean;
-  doctor?: typeof doctorsTable.$inferSelect;
+  doctor?: Doctor;
   onSuccess?: () => void;
 }
 
@@ -79,19 +94,28 @@ const UpsertDoctorForm = ({
   onSuccess,
   isOpen,
 }: UpsertDoctorFormProps) => {
+  const [credentials, setCredentials] = useState<{ email: string; password: string } | null>(null);
+
+  // Log quando credentials mudar
+  useEffect(() => {
+    console.log("=== CREDENTIALS STATE CHANGED ===");
+    console.log("Credentials:", credentials);
+  }, [credentials]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     shouldUnregister: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: doctor?.name ?? "",
       specialty: doctor?.specialty ?? "",
-      appointmentPrice: doctor?.appointmentPriceInCents
-        ? doctor.appointmentPriceInCents / 100
+      appointmentPrice: doctor?.appointmentPrice
+        ? parseFloat(doctor.appointmentPrice.replace(/[^\d,]/g, '').replace(',', '.')) || 0
         : 0,
       availableFromWeekDay: doctor?.availableFromWeekDay?.toString() ?? "1",
       availableToWeekDay: doctor?.availableToWeekDay?.toString() ?? "5",
       availableFromTime: doctor?.availableFromTime ?? "",
       availableToTime: doctor?.availableToTime ?? "",
+      bio: doctor?.bio ?? "",
     },
   });
 
@@ -100,36 +124,158 @@ const UpsertDoctorForm = ({
       form.reset({
         name: doctor?.name ?? "",
         specialty: doctor?.specialty ?? "",
-        appointmentPrice: doctor?.appointmentPriceInCents
-          ? doctor.appointmentPriceInCents / 100
+        appointmentPrice: doctor?.appointmentPrice
+          ? parseFloat(doctor.appointmentPrice.replace(/[^\d,]/g, '').replace(',', '.')) || 0
           : 0,
         availableFromWeekDay: doctor?.availableFromWeekDay?.toString() ?? "1",
         availableToWeekDay: doctor?.availableToWeekDay?.toString() ?? "5",
         availableFromTime: doctor?.availableFromTime ?? "",
         availableToTime: doctor?.availableToTime ?? "",
+        bio: doctor?.bio ?? "",
       });
     }
   }, [isOpen, form, doctor]);
 
   const upsertDoctorAction = useAction(upsertDoctor, {
-    onSuccess: () => {
-      toast.success("Advogado adicionado com sucesso.");
-      onSuccess?.();
+    onSuccess: (result) => {
+      console.log("=== SUCCESS NO FORMULÁRIO ===");
+      console.log("Resultado completo:", result);
+      console.log("result.data:", result.data);
+      console.log("result.data?.success:", result.data?.success);
+      console.log("result.data?.data:", result.data?.data);
+
+      if (result.data?.success) {
+        if (result.data.data?.email && result.data.data?.tempPassword) {
+          console.log("=== CREDENCIAIS ENCONTRADAS ===");
+          console.log("Email:", result.data.data.email);
+          console.log("Senha:", result.data.data.tempPassword);
+
+          // Novo advogado criado - salvar credenciais para mostrar
+          setCredentials({
+            email: result.data.data.email,
+            password: result.data.data.tempPassword,
+          });
+          toast.success("Advogado criado com sucesso! Credenciais geradas.");
+        } else {
+          console.log("=== ADVOGADO ATUALIZADO ===");
+          // Advogado atualizado
+          toast.success("Advogado atualizado com sucesso.");
+          onSuccess?.();
+        }
+      } else {
+        console.log("=== SUCESSO FALSO ===");
+        toast.error("Erro: " + (result.data?.message || "Erro desconhecido"));
+      }
     },
-    onError: () => {
-      toast.error("Erro ao adicionar advogado.");
+    onError: (error) => {
+      console.error("=== ERRO NO FORMULÁRIO ===");
+      console.error("Erro ao salvar advogado:", error);
+      toast.error("Erro ao salvar advogado. Tente novamente.");
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log("=== SUBMIT DO FORMULÁRIO ===");
+    console.log("Valores do formulário:", values);
+    console.log("Doctor ID:", doctor?.id);
+    console.log("isPending:", upsertDoctorAction.isPending);
+
+    // Prevenir múltiplos submits
+    if (upsertDoctorAction.isPending) {
+      console.log("Action já está executando, ignorando submit");
+      return;
+    }
+
     upsertDoctorAction.execute({
       ...values,
       id: doctor?.id,
       availableFromWeekDay: parseInt(values.availableFromWeekDay),
       availableToWeekDay: parseInt(values.availableToWeekDay),
       appointmentPriceInCents: values.appointmentPrice * 100,
+      bio: values.bio,
     });
   };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copiado para a área de transferência!");
+  };
+
+  const handleCredentialsClose = () => {
+    setCredentials(null);
+    onSuccess?.();
+  };
+
+  // Se há credenciais para mostrar, exibir diálogo de credenciais
+  if (credentials) {
+    return (
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Advogado Criado com Sucesso!</DialogTitle>
+          <DialogDescription>
+            As credenciais de acesso foram geradas. Anote ou copie essas informações:
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h4 className="font-medium text-green-900 mb-3">Credenciais de Acesso:</h4>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium text-green-800">Email:</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <code className="flex-1 p-2 bg-white border rounded text-sm">
+                    {credentials.email}
+                  </code>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(credentials.email)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-green-800">Senha Temporária:</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <code className="flex-1 p-2 bg-white border rounded text-sm">
+                    {credentials.password}
+                  </code>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(credentials.password)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h4 className="font-medium text-yellow-900 mb-2">⚠️ Importante:</h4>
+            <ul className="text-sm text-yellow-800 space-y-1">
+              <li>• O advogado deve alterar a senha no primeiro login</li>
+              <li>• Essas credenciais são temporárias</li>
+              <li>• Anote essas informações em local seguro</li>
+              <li>• O advogado terá acesso como administrador</li>
+            </ul>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button onClick={handleCredentialsClose} className="w-full">
+            Entendi, Continuar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    );
+  }
 
   return (
     <DialogContent>
@@ -399,6 +545,23 @@ const UpsertDoctorForm = ({
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Descrição/Bio (opcional)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Conte um pouco sobre você, sua experiência, áreas de atuação, etc. (máx. 500 caracteres)"
+                    {...field}
+                    maxLength={500}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

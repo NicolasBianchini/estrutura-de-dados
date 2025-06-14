@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const upsertDoctorSchema = z
   .object({
-    id: z.string().uuid().optional(),
+    id: z.string().optional(),
     name: z.string().trim().min(1, {
       message: "Nome é obrigatório.",
     }),
@@ -20,14 +20,24 @@ export const upsertDoctorSchema = z
     availableToTime: z.string().min(1, {
       message: "Hora de término é obrigatória.",
     }),
+    bio: z.string().max(500, { message: "A descrição deve ter no máximo 500 caracteres." }).optional(),
   })
   .refine(
     (data) => {
-      return data.availableFromTime < data.availableToTime;
+      // Converter horários para minutos para comparação correta
+      const timeToMinutes = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+      };
+
+      const fromMinutes = timeToMinutes(data.availableFromTime);
+      const toMinutes = timeToMinutes(data.availableToTime);
+
+      return fromMinutes < toMinutes;
     },
     {
       message:
-        "O horário de início não pode ser anterior ao horário de término.",
+        "O horário de início deve ser anterior ao horário de término.",
       path: ["availableToTime"],
     },
   );

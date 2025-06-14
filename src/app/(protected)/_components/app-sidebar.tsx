@@ -30,7 +30,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/hooks/use-firebase-auth";
 
 const items = [
   {
@@ -49,30 +49,49 @@ const items = [
     icon: LucideScale,
   },
   {
-    title: "Pacientes",
+    title: "Clientes",
     url: "/patients",
     icon: UsersRound,
+  },
+  {
+    title: "Conheça os Advogados",
+    url: "/advogados",
+    icon: LucideScale,
   },
 ];
 
 export function AppSidebar() {
   const router = useRouter();
-  const session = authClient.useSession();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
 
   const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/authentication");
-        },
-      },
-    });
+    await logout();
+    router.push("/");
   };
+
+  const getUserInitials = (name: string) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((n) => n.charAt(0))
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <Sidebar>
-      <SidebarHeader className="border-b p-4">
-        <Image src="/logo.svg.png" alt="FGJN" width={100} height={28} />
+      <SidebarHeader className="border-b p-4 flex justify-center items-center">
+        <div className="w-[180px] h-[60px] relative">
+          <Image
+            src="/logo.svg.png"
+            alt="FGJN"
+            fill
+            style={{ objectFit: "contain" }}
+            priority
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -92,23 +111,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel></SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === "/subscription"}
-                >
-                  <Link href="/subscription">
-                    <span></span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -117,14 +119,16 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
                   <Avatar>
-                    <AvatarFallback>F</AvatarFallback>
+                    <AvatarFallback>
+                      {getUserInitials(user?.name || "U")}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="text-sm">
-                      {session.data?.user?.clinic?.name}
+                      {user?.name || "Usuário"}
                     </p>
                     <p className="text-muted-foreground text-sm">
-                      {session.data?.user.email}
+                      {user?.email}
                     </p>
                   </div>
                 </SidebarMenuButton>

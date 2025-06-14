@@ -8,7 +8,6 @@ import {
   Heart,
   Hospital,
   Scale,
-  Stethoscope,
 } from "lucide-react";
 
 import { Card, CardContent, CardTitle } from "@/components/ui/card";

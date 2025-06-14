@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,7 @@ import { FormControl, FormMessage } from "@/components/ui/form";
 import { FormItem, FormLabel } from "@/components/ui/form";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/hooks/use-firebase-auth";
 
 const registerSchema = z.object({
   name: z.string().trim().min(1, { message: "Nome é obrigatório" }),
@@ -32,40 +31,41 @@ const registerSchema = z.object({
   password: z
     .string()
     .trim()
-    .min(8, { message: "A senha deve ter pelo menos 8 caracteres" }),
+    .min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
+  confirmPassword: z
+    .string()
+    .trim()
+    .min(6, { message: "Confirmação de senha obrigatória" }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
 });
 
 const SignUpForm = () => {
   const router = useRouter();
+  const { signUp, authLoading } = useAuth();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    await authClient.signUp.email(
-      {
-        email: values.email,
-        password: values.password,
-        name: values.name,
-      },
-      {
-        onSuccess: () => {
-          router.push("/dashboard");
-        },
-        onError: (ctx) => {
-          if (ctx.error.code === "USER_ALREADY_EXISTS") {
-            toast.error("E-mail já cadastrado.");
-            return;
-          }
-          toast.error("Erro ao criar conta.");
-        },
-      },
-    );
+    const result = await signUp(values.email, values.password, values.name, "user");
+
+    if (result.success && result.user) {
+      // Redirecionar baseado no role do usuário
+      if (result.user.role === "admin") {
+        router.push("/dashboard");
+      } else {
+        router.push("/user-dashboard");
+      }
+    }
   }
 
   return (
@@ -97,7 +97,7 @@ const SignUpForm = () => {
                 <FormItem>
                   <FormLabel>E-mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite seu e-mail" {...field} />
+                    <Input placeholder="Digite seu e-mail" type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -110,11 +110,20 @@ const SignUpForm = () => {
                 <FormItem>
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Digite sua senha"
-                      type="password"
-                      {...field}
-                    />
+                    <Input placeholder="Digite sua senha" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirme a senha</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Confirme sua senha" type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -125,9 +134,9 @@ const SignUpForm = () => {
             <Button
               type="submit"
               className="w-full"
-              disabled={form.formState.isSubmitting}
+              disabled={authLoading}
             >
-              {form.formState.isSubmitting ? (
+              {authLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 "Criar conta"

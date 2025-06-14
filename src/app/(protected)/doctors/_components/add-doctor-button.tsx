@@ -8,8 +8,18 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 import UpsertDoctorForm from "./upsert-doctor-form";
 
-const AddDoctorButton = () => {
+interface AddDoctorButtonProps {
+  onSuccess?: () => void;
+}
+
+const AddDoctorButton = ({ onSuccess }: AddDoctorButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleSuccess = () => {
+    setIsOpen(false);
+    onSuccess?.();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -18,7 +28,7 @@ const AddDoctorButton = () => {
           Adicionar advogado
         </Button>
       </DialogTrigger>
-      <UpsertDoctorForm onSuccess={() => setIsOpen(false)} isOpen={isOpen} />
+      <UpsertDoctorForm onSuccess={handleSuccess} isOpen={isOpen} />
     </Dialog>
   );
 };

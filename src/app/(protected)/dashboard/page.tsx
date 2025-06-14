@@ -1,8 +1,9 @@
-import dayjs from "dayjs";
-import { Calendar } from "lucide-react";
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useState } from "react";
+
+import { getAllAppointments } from "@/actions/get-all-appointments";
 import {
   PageActions,
   PageContainer,
@@ -12,49 +13,145 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { getDashboard } from "@/data/get-dashboard";
 
-import { appointmentsTableColumns } from "../appointments/_components/table-columns";
-import AppointmentsChart from "./_components/appointments-chart";
-import { DatePicker } from "./_components/date-picker";
-import StatsCards from "./_components/stats-cards";
+import AddDoctorButton from "./_components/add-doctor-button";
+import DashboardCards from "./_components/dashboard-cards";
+import TodayAppointments from "./_components/today-appointments";
 import TopDoctors from "./_components/top-doctors";
 import TopSpecialties from "./_components/top-specialties";
 
-interface DashboardPageProps {
-  searchParams: Promise<{
-    from: string;
-    to: string;
-  }>;
-}
+// Definir o tipo DashboardData
+type DashboardData = {
+  stats: {
+    total: number;
+    confirmed: number;
+    pending: number;
+    cancelled: number;
+    completed: number;
+    todayAppointments: number;
+    monthlyAppointments: number;
+    totalRevenue: number;
+  };
+  todayAppointments: {
+    id: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    lawyerId: string;
+    lawyerName: string;
+    specialty: string;
+    preferredDate: string;
+    preferredTime: string;
+    description: string;
+    price: string;
+    status: string;
+    requestedAt: string;
+    notes?: string;
+  }[];
+  topDoctors: {
+    id: string;
+    name: string;
+    specialty: string;
+    appointments: number;
+    avatarImageUrl: string | null;
+  }[];
+  topSpecialties: {
+    specialty: string;
+    appointments: number;
+  }[];
+};
 
-const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
-  const { from, to } = await searchParams;
+// Definir o tipo TodayAppointment
+type TodayAppointment = {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  lawyerId: string;
+  lawyerName: string;
+  specialty: string;
+  preferredDate: string;
+  preferredTime: string;
+  description: string;
+  price: string;
+  status: string;
+  requestedAt: string | Date;
+  notes?: string;
+};
 
-  const validFrom = from || dayjs().format("YYYY-MM-DD");
-  const validTo = to || dayjs().add(1, "month").format("YYYY-MM-DD");
+export default function DashboardPage() {
+  console.log("=== DASHBOARD PAGE CARREGANDO ===");
 
-  // Remover dependência da sessão, usar valores estáticos fictícios ou mockados
-  const {
-    totalRevenue,
-    totalAppointments,
-    totalPatients,
-    totalDoctors,
-    topDoctors,
-    topSpecialties,
-    todayAppointments,
-    dailyAppointmentsData,
-  } = await getDashboard({
-    from: validFrom,
-    to: validTo,
-    session: {
-      user: {
-        clinic: {
-          id: "mock-clinic-id", // valor fictício
-        },
-      },
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    stats: {
+      total: 0,
+      confirmed: 0,
+      pending: 0,
+      cancelled: 0,
+      completed: 0,
+      todayAppointments: 0,
+      monthlyAppointments: 0,
+      totalRevenue: 0,
+    },
+    todayAppointments: [],
+    topDoctors: [],
+    topSpecialties: [],
+  });
+
+  const { execute: loadDashboardData, isPending } = useAction(getAllAppointments, {
+    onSuccess: (result) => {
+      console.log("=== DASHBOARD DATA CARREGADO ===");
+      console.log("Resultado:", result);
+      if (result.data?.success) {
+        console.log("Dados do dashboard:", result.data.data);
+        setDashboardData({
+          stats: result.data.data.stats,
+          todayAppointments: result.data.data.todayAppointments.map((apt: TodayAppointment) => ({
+            ...apt,
+            requestedAt: typeof apt.requestedAt === 'string' ? apt.requestedAt : (apt.requestedAt instanceof Date ? apt.requestedAt.toISOString() : String(apt.requestedAt)),
+          })),
+          topDoctors: result.data.data.topDoctors,
+          topSpecialties: result.data.data.topSpecialties,
+        });
+      } else {
+        console.log("Falha ao carregar dados do dashboard");
+      }
+    },
+    onError: (error) => {
+      console.error("=== ERRO NO DASHBOARD ===");
+      console.error("Erro ao carregar dados do dashboard:", error);
     },
   });
+
+  useEffect(() => {
+    console.log("=== DASHBOARD EFFECT - CARREGANDO DADOS ===");
+    loadDashboardData();
+  }, [loadDashboardData]);
+
+  console.log("=== DASHBOARD STATE ===");
+  console.log("isPending:", isPending);
+  console.log("dashboardData:", dashboardData);
+
+  if (isPending) {
+    return (
+      <PageContainer>
+        <PageHeader>
+          <PageHeaderContent>
+            <PageTitle>Dashboard</PageTitle>
+            <PageDescription>
+              Visão geral da sua clínica e agendamentos
+            </PageDescription>
+          </PageHeaderContent>
+        </PageHeader>
+        <PageContent>
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2">Carregando dados...</span>
+          </div>
+        </PageContent>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
@@ -62,46 +159,29 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
         <PageHeaderContent>
           <PageTitle>Dashboard</PageTitle>
           <PageDescription>
-            Tenha uma visão geral da sua clínica.
+            Visão geral da sua clínica e agendamentos
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <DatePicker />
+          <AddDoctorButton />
         </PageActions>
       </PageHeader>
+
       <PageContent>
-        <StatsCards
-          totalRevenue={totalRevenue.total ? Number(totalRevenue.total) : null}
-          totalAppointments={totalAppointments.total}
-          totalPatients={totalPatients.total}
-          totalDoctors={totalDoctors.total}
+        <DashboardCards
+          totalAppointments={dashboardData.stats.total}
+          confirmedAppointments={dashboardData.stats.confirmed}
+          pendingAppointments={dashboardData.stats.pending}
+          monthlyRevenue={dashboardData.stats.totalRevenue}
         />
-        <div className="grid grid-cols-[2.25fr_1fr] gap-4">
-          <AppointmentsChart dailyAppointmentsData={dailyAppointmentsData} />
-          <TopDoctors doctors={topDoctors} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <TodayAppointments appointments={dashboardData.todayAppointments} />
+          <TopDoctors doctors={dashboardData.topDoctors} />
         </div>
-        <div className="grid grid-cols-[2.25fr_1fr] gap-4">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <Calendar className="text-muted-foreground" />
-                <CardTitle className="text-base">
-                  Agendamentos de hoje
-                </CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={appointmentsTableColumns}
-                data={todayAppointments}
-              />
-            </CardContent>
-          </Card>
-          <TopSpecialties topSpecialties={topSpecialties} />
-        </div>
+
+        <TopSpecialties topSpecialties={dashboardData.topSpecialties} />
       </PageContent>
     </PageContainer>
   );
-};
-
-export default DashboardPage;
+}

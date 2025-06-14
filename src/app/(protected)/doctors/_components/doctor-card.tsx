@@ -33,29 +33,47 @@ import {
 } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { doctorsTable } from "@/db/schema";
-import { formatCurrencyInCents } from "@/helpers/currency";
 
-import { getAvailability } from "../_helpers/availability";
 import UpsertDoctorForm from "./upsert-doctor-form";
 
-interface DoctorCardProps {
-  doctor: typeof doctorsTable.$inferSelect;
+interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+  email: string;
+  avatarImageUrl?: string;
+  availableFromTime: string;
+  availableToTime: string;
+  availableFromWeekDay: number;
+  availableToWeekDay: number;
+  appointmentPrice?: string;
 }
 
-const DoctorCard = ({ doctor }: DoctorCardProps) => {
+interface DoctorCardProps {
+  doctor: Doctor;
+  onUpdate?: () => void;
+}
+
+const DoctorCard = ({ doctor, onUpdate }: DoctorCardProps) => {
   const [isUpsertDoctorDialogOpen, setIsUpsertDoctorDialogOpen] =
     useState(false);
   const deleteDoctorAction = useAction(deleteDoctor, {
-    onSuccess: () => {
-      toast.success("Advogado deletado com sucesso.");
+    onSuccess: (result) => {
+      if (result.data?.success) {
+        toast.success(result.data.message || "Advogado deletado com sucesso.");
+        onUpdate?.();
+      } else {
+        toast.error(result.data?.message || "Erro ao deletar advogado.");
+      }
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Erro ao deletar advogado:", error);
       toast.error("Erro ao deletar advogado.");
     },
   });
   const handleDeleteDoctorClick = () => {
     if (!doctor) return;
+    console.log("Deletando advogado:", doctor.name, "ID:", doctor.id);
     deleteDoctorAction.execute({ id: doctor.id });
   };
 
@@ -63,7 +81,11 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
     .split(" ")
     .map((name) => name[0])
     .join("");
-  const availability = getAvailability(doctor);
+
+  // Criar objeto de disponibilidade simples sem usar getAvailability
+  const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  const fromDay = weekDays[doctor.availableFromWeekDay];
+  const toDay = weekDays[doctor.availableToWeekDay];
 
   return (
     <Card>
@@ -82,17 +104,18 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
       <CardContent className="flex flex-col gap-2">
         <Badge variant="outline">
           <CalendarIcon className="mr-1" />
-          {availability.from.format("dddd")} a {availability.to.format("dddd")}
+          {fromDay} a {toDay}
         </Badge>
         <Badge variant="outline">
           <ClockIcon className="mr-1" />
-          {availability.from.format("HH:mm")} as{" "}
-          {availability.to.format("HH:mm")}
+          {doctor.availableFromTime} às {doctor.availableToTime}
         </Badge>
-        <Badge variant="outline">
-          <DollarSignIcon className="mr-1" />
-          {formatCurrencyInCents(doctor.appointmentPriceInCents)}
-        </Badge>
+        {doctor.appointmentPrice && (
+          <Badge variant="outline">
+            <DollarSignIcon className="mr-1" />
+            {doctor.appointmentPrice}
+          </Badge>
+        )}
       </CardContent>
       <Separator />
       <CardFooter className="flex flex-col gap-2">
@@ -104,12 +127,11 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
             <Button className="w-full">Ver detalhes</Button>
           </DialogTrigger>
           <UpsertDoctorForm
-            doctor={{
-              ...doctor,
-              availableFromTime: availability.from.format("HH:mm:ss"),
-              availableToTime: availability.to.format("HH:mm:ss"),
+            doctor={doctor}
+            onSuccess={() => {
+              setIsUpsertDoctorDialogOpen(false);
+              onUpdate?.();
             }}
-            onSuccess={() => setIsUpsertDoctorDialogOpen(false)}
             isOpen={isUpsertDoctorDialogOpen}
           />
         </Dialog>
