@@ -276,9 +276,6 @@ export default function AppointmentsPage() {
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>Agendamentos</PageTitle>
-            <PageDescription>
-              Gerencie os agendamentos da sua clínica
-            </PageDescription>
           </PageHeaderContent>
         </PageHeader>
         <PageContent>
@@ -297,7 +294,7 @@ export default function AppointmentsPage() {
         <PageHeaderContent>
           <PageTitle>Agendamentos</PageTitle>
           <PageDescription>
-            Gerencie os agendamentos da sua clínica
+            Gerencie os agendamentos do seu escritório
           </PageDescription>
         </PageHeaderContent>
         <PageActions>

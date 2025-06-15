@@ -87,7 +87,7 @@ const DoctorsPage = () => {
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>Advogados</PageTitle>
-            <PageDescription>Gerencie os advogados da sua clínica</PageDescription>
+            <PageDescription>Gerencie os advogados do seu escritório</PageDescription>
           </PageHeaderContent>
         </PageHeader>
         <PageContent>
@@ -105,7 +105,7 @@ const DoctorsPage = () => {
       <PageHeader>
         <PageHeaderContent>
           <PageTitle>Advogados</PageTitle>
-          <PageDescription>Gerencie os advogados da sua clínica</PageDescription>
+          <PageDescription>Gerencie os advogados do seu escritório</PageDescription>
         </PageHeaderContent>
         <PageActions>
           <AddDoctorButton onSuccess={refreshDoctors} />

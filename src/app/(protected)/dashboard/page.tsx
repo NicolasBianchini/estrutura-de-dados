@@ -138,9 +138,6 @@ export default function DashboardPage() {
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>Dashboard</PageTitle>
-            <PageDescription>
-              Visão geral da sua clínica e agendamentos
-            </PageDescription>
           </PageHeaderContent>
         </PageHeader>
         <PageContent>
@@ -159,7 +156,7 @@ export default function DashboardPage() {
         <PageHeaderContent>
           <PageTitle>Dashboard</PageTitle>
           <PageDescription>
-            Visão geral da sua clínica e agendamentos
+            Visão geral do seu escritório e agendamentos
           </PageDescription>
         </PageHeaderContent>
         <PageActions>

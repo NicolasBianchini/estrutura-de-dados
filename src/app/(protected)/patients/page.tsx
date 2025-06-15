@@ -77,9 +77,6 @@ const PatientsPage = () => {
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>Clientes</PageTitle>
-            <PageDescription>
-              Gerencie os clientes da sua clínica
-            </PageDescription>
           </PageHeaderContent>
         </PageHeader>
         <PageContent>
@@ -98,7 +95,7 @@ const PatientsPage = () => {
         <PageHeaderContent>
           <PageTitle>Clientes</PageTitle>
           <PageDescription>
-            Gerencie os clientes da sua clínica e visualize seus motivos de contato
+            Gerencie os clientes do seu escritório e visualize seus motivos de contato
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
