@@ -353,7 +353,7 @@ export default function RequestAppointmentPage() {
                                     <div>
                                         <Label htmlFor="lawyer">Advogado *</Label>
                                         <Select value={selectedLawyer} onValueChange={setSelectedLawyer}>
-                                            <SelectTrigger>
+                                            <SelectTrigger className="w-full max-w-full truncate">
                                                 <SelectValue placeholder="Selecione um advogado" />
                                             </SelectTrigger>
                                             <SelectContent>

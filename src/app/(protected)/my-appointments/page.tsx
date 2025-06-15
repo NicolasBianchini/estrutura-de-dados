@@ -137,10 +137,12 @@ export default function MyAppointmentsPage() {
                 <Tabs defaultValue="confirmed" className="w-full">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="confirmed">
-                            Agendamentos Confirmados ({appointments.confirmed.length})
+                            <span className="block sm:hidden">Confirmados ({appointments.confirmed.length})</span>
+                            <span className="hidden sm:block">Agendamentos Confirmados ({appointments.confirmed.length})</span>
                         </TabsTrigger>
                         <TabsTrigger value="pending">
-                            Solicitações Pendentes ({appointments.pending.length})
+                            <span className="block sm:hidden">Pendentes ({appointments.pending.length})</span>
+                            <span className="hidden sm:block">Solicitações Pendentes ({appointments.pending.length})</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -158,20 +160,20 @@ export default function MyAppointmentsPage() {
                         ) : (
                             <div className="grid gap-4">
                                 {appointments.confirmed.map((appointment) => (
-                                    <Card key={appointment.id}>
+                                    <Card key={appointment.id} className="w-full max-w-full">
                                         <CardHeader>
-                                            <div className="flex items-center justify-between">
-                                                <CardTitle className="text-lg">{appointment.lawyerName}</CardTitle>
+                                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                                <CardTitle className="text-base sm:text-lg">{appointment.lawyerName}</CardTitle>
                                                 {getStatusBadge(appointment.status)}
                                             </div>
-                                            <CardDescription>{appointment.specialty}</CardDescription>
+                                            <CardDescription className="text-xs sm:text-sm">{appointment.specialty}</CardDescription>
                                         </CardHeader>
 
                                         <CardContent className="space-y-4">
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
                                                 <div className="flex items-center gap-2">
                                                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm">
+                                                    <span className="text-xs sm:text-sm">
                                                         {appointment.dateTime
                                                             ? dayjs(appointment.dateTime).tz("America/Sao_Paulo").format("DD/MM/YYYY")
                                                             : new Date(appointment.preferredDate).toLocaleDateString('pt-BR')}
@@ -179,30 +181,32 @@ export default function MyAppointmentsPage() {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <Clock className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm">
+                                                    <span className="text-xs sm:text-sm">
                                                         {appointment.dateTime
                                                             ? dayjs(appointment.dateTime).tz("America/Sao_Paulo").format("HH:mm")
                                                             : appointment.preferredTime}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-medium">{appointment.price}</span>
+                                                    <span className="text-xs sm:text-sm font-medium">{appointment.price}</span>
                                                 </div>
                                             </div>
 
                                             {appointment.notes && (
                                                 <div className="pt-2 border-t">
-                                                    <p className="text-sm text-muted-foreground">
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">
                                                         <strong>Observações:</strong> {appointment.notes}
                                                     </p>
                                                 </div>
                                             )}
 
-                                            <div className="pt-2 border-t">
-                                                <p className="text-sm text-muted-foreground">
-                                                    <strong>Descrição do caso:</strong> {appointment.description}
-                                                </p>
-                                            </div>
+                                            {appointment.description && (
+                                                <div className="pt-2 border-t">
+                                                    <p className="text-xs sm:text-sm text-muted-foreground">
+                                                        <strong>Descrição do caso:</strong> {appointment.description}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </CardContent>
                                     </Card>
                                 ))}

@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/use-firebase-auth";
 import { getLawyerByUserId } from "@/utils/get-lawyer-by-user-id";
 
 import AddAppointmentButton from "./_components/add-appointment-button";
+import AppointmentsTableActions from "./_components/table-actions";
 import { createAppointmentsTableColumns } from "./_components/table-columns";
 
 interface Appointment {
@@ -302,10 +303,31 @@ export default function AppointmentsPage() {
         </PageActions>
       </PageHeader>
       <PageContent>
-        <DataTable
-          data={appointments}
-          columns={createAppointmentsTableColumns(refreshAppointments)}
-        />
+        {/* Mobile: Cards */}
+        <div className="flex flex-col gap-4 md:hidden">
+          {appointments.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8">Nenhum agendamento encontrado.</div>
+          ) : (
+            appointments.map((apt) => (
+              <div key={apt.id} className="rounded-lg border p-4 shadow-sm bg-white flex flex-col gap-2">
+                <div className="font-semibold text-base truncate">{apt.patient.name}</div>
+                <div className="text-sm text-muted-foreground truncate">Advogado: {apt.doctor.name}</div>
+                <div className="text-sm text-muted-foreground truncate">Especialidade: {apt.doctor.specialty}</div>
+                <div className="text-sm">{apt.date.toLocaleDateString()} às {apt.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                <div className="mt-2">
+                  <AppointmentsTableActions appointment={apt} onUpdate={refreshAppointments} />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {/* Desktop: Tabela */}
+        <div className="hidden md:block">
+          <DataTable
+            data={appointments}
+            columns={createAppointmentsTableColumns(refreshAppointments)}
+          />
+        </div>
       </PageContent>
     </PageContainer>
   );
