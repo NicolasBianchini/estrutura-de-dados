@@ -15,7 +15,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "FGJN Advogados",
   icons: {
-    icon: "/logo.png",
+    icon: "/favicon.ico",
   },
 };
 
