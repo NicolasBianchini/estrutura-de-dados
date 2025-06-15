@@ -173,6 +173,12 @@ const AppointmentsTableActions = ({
                       Confirmar o agendamento de {appointment.patient.name} com {appointment.doctor.name}.
                     </DialogDescription>
                   </DialogHeader>
+                  {appointment.description && (
+                    <div className="bg-muted rounded p-3 text-sm mb-2">
+                      <span className="font-medium">Descrição do cliente:</span><br />
+                      {appointment.description}
+                    </div>
+                  )}
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="confirm-notes">Observações (opcional)</Label>
