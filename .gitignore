@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Banco de dados local
+*.sqlite
+*.sqlite3
+
+# TurboRepo
+.turbo
+
+# Arquivos de lock alternativos
+pnpm-lock.yaml
+
+# Relatórios de cobertura/lint
+*.lcov
+
+# Configuração local do VSCode
+.vscode/
