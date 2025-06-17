@@ -18,6 +18,7 @@ import {
 
 import AddPatientButton from "./_components/add-patient-button";
 import { createPatientsTableColumns } from "./_components/table-columns";
+import PatientCard from "./_components/patient-card";
 
 interface ClientData {
   id: string;
@@ -154,11 +155,29 @@ const PatientsPage = () => {
           </Card>
         </div>
 
-        {/* Tabela de clientes */}
-        <DataTable
-          data={clients}
-          columns={createPatientsTableColumns()}
-        />
+        {/* Lista responsiva de clientes */}
+        <div className="block md:hidden space-y-4">
+          {clients.map((client) => (
+            <div key={client.id}>
+              {/* Adaptando os dados para o PatientCard se necessário */}
+              <PatientCard patient={{
+                id: client.id,
+                name: client.name,
+                email: client.email,
+                phoneNumber: '', // Adapte se houver telefone
+                sex: 'male', // Adapte se houver sexo
+                createdAt: client.createdAt,
+                updatedAt: '',
+              }} />
+            </div>
+          ))}
+        </div>
+        <div className="hidden md:block">
+          <DataTable
+            data={clients}
+            columns={createPatientsTableColumns()}
+          />
+        </div>
       </PageContent>
     </PageContainer>
   );

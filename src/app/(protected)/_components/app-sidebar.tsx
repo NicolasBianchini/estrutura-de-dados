@@ -53,11 +53,11 @@ const items = [
     url: "/patients",
     icon: UsersRound,
   },
-  {
-    title: "Conheça os Advogados",
-    url: "/advogados",
-    icon: LucideScale,
-  },
+  // {
+  //   title: "Conheça os Advogados",
+  //   url: "/advogados",
+  //   icon: LucideScale,
+  // },
 ];
 
 export function AppSidebar() {

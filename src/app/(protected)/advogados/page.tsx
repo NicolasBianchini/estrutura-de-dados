@@ -9,7 +9,6 @@ import {
     PageDescription,
     PageHeader,
     PageHeaderContent,
-    PageTitle,
 } from "@/components/ui/page-container";
 import { db } from "@/lib/firebase";
 
@@ -75,7 +74,7 @@ const PublicDoctorsPage = () => {
             <PageContainer>
                 <PageHeader>
                     <PageHeaderContent>
-                        <PageTitle>Conheça nossos Advogados</PageTitle>
+                        {/* <PageTitle>Conheça nossos Advogados</PageTitle> */}
                         <PageDescription>Veja o perfil dos profissionais disponíveis para te ajudar</PageDescription>
                     </PageHeaderContent>
                 </PageHeader>
@@ -93,7 +92,7 @@ const PublicDoctorsPage = () => {
         <PageContainer>
             <PageHeader>
                 <PageHeaderContent>
-                    <PageTitle>Conheça nossos Advogados</PageTitle>
+                    {/* <PageTitle>Conheça nossos Advogados</PageTitle> */}
                     <PageDescription>Veja o perfil dos profissionais disponíveis para te ajudar</PageDescription>
                 </PageHeaderContent>
             </PageHeader>
