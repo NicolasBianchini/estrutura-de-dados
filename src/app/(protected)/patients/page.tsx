@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/page-container";
 
 import AddPatientButton from "./_components/add-patient-button";
-import { createPatientsTableColumns } from "./_components/table-columns";
 import PatientCard from "./_components/patient-card";
+import { createPatientsTableColumns } from "./_components/table-columns";
 
 interface ClientData {
   id: string;
@@ -45,6 +45,7 @@ interface ClientData {
     preferredTime: string;
   }>;
   createdAt: string;
+  updatedAt?: string;
 }
 
 const PatientsPage = () => {
@@ -166,8 +167,9 @@ const PatientsPage = () => {
                 email: client.email,
                 phoneNumber: '', // Adapte se houver telefone
                 sex: 'male', // Adapte se houver sexo
-                createdAt: client.createdAt,
-                updatedAt: '',
+                createdAt: new Date(client.createdAt),
+                updatedAt: client.updatedAt ? new Date(client.updatedAt) : null,
+                clinicId: '', // Adicionado para satisfazer o tipo
               }} />
             </div>
           ))}
