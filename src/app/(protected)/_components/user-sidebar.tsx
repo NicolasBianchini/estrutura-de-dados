@@ -49,6 +49,11 @@ const items = [
         icon: Calendar,
     },
     {
+        title: "Conheça os Advogados",
+        url: "/advogados",
+        icon: User,
+    },
+    {
         title: "Perfil",
         url: "/profile",
         icon: User,
