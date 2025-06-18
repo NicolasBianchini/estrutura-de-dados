@@ -7,7 +7,6 @@ import { getAllClients } from "@/actions/get-all-clients";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import {
-  PageActions,
   PageContainer,
   PageContent,
   PageDescription,
@@ -16,7 +15,6 @@ import {
   PageTitle,
 } from "@/components/ui/page-container";
 
-import AddPatientButton from "./_components/add-patient-button";
 import PatientCard from "./_components/patient-card";
 import { createPatientsTableColumns } from "./_components/table-columns";
 
@@ -100,9 +98,6 @@ const PatientsPage = () => {
             Gerencie os clientes do seu escritório e visualize seus motivos de contato
           </PageDescription>
         </PageHeaderContent>
-        <PageActions>
-          <AddPatientButton />
-        </PageActions>
       </PageHeader>
       <PageContent>
         {/* Estatísticas */}

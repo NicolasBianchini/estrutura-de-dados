@@ -133,6 +133,7 @@ export const upsertDoctor = actionClient
         bio: parsedInput.bio,
         createdAt: new Date(),
         updatedAt: null,
+        emailVerified: true, // Email já vem verificado
       };
 
       // Usar setDoc com o ID customizado como chave do documento
