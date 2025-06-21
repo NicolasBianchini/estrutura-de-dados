@@ -150,7 +150,6 @@ O projeto estará disponível em: **http://localhost:3003**
    - **Nome**: Seu nome completo
    - **Email**: Use um email válido (ex: `teste@email.com`)
    - **Senha**: Mínimo 6 caracteres (ex: `123456`)
-   - **Tipo**: Selecione **"Usuário"** (opção padrão)
 3. ✅ Clique **"Criar Conta"**
 4. 📬 **IMPORTANTE: Verifique seu email (inclusive SPAM)** para confirmar a conta
 5. 🚀 Após confirmar, será redirecionado para seu dashboard pessoal
@@ -199,7 +198,6 @@ Após criar sua conta, você terá acesso a:
    - **Nome completo**
    - **Email válido**
    - **Senha** (mínimo 6 caracteres)
-   - **Tipo de usuário**: Selecione **"Admin"**
 3. Clique **"Criar Conta"**
 4. Você será redirecionado para `/dashboard`
 
