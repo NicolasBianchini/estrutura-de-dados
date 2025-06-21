@@ -144,42 +144,35 @@ O projeto estará disponível em: **http://localhost:3003**
 2. 👀 Você verá a tela inicial com **"FGJN Advocacia"**
 3. 📋 Há duas abas: **"Entrar"** e **"Cadastrar"**
 
-#### **2. Criar Conta de Teste:**
+#### **2. Criar Conta de Usuário:**
 1. 📝 Clique na aba **"Cadastrar"**
 2. ✏️ Preencha os dados:
    - **Nome**: Seu nome completo
    - **Email**: Use um email válido (ex: `teste@email.com`)
    - **Senha**: Mínimo 6 caracteres (ex: `123456`)
-   - **Tipo**: Escolha **"Admin"** para ver todas as funcionalidades
+   - **Tipo**: Selecione **"Usuário"** (opção padrão)
 3. ✅ Clique **"Criar Conta"**
-4. 🚀 Será redirecionado automaticamente para o dashboard
+4. 📬 **IMPORTANTE: Verifique seu email (inclusive SPAM)** para confirmar a conta
+5. 🚀 Após confirmar, será redirecionado para seu dashboard pessoal
 
-#### **3. Explorar como Administrador:**
-Após criar conta **Admin**, você terá acesso a:
+#### **3. Explorar como Usuário:**
+Após criar sua conta, você terá acesso a:
 
-- 📊 **Dashboard Principal** - Métricas e visão geral
-- 👥 **Clientes** - Adicionar e gerenciar clientes
-- ⚖️ **Advogados** - Cadastrar advogados e especialidades
-- 📅 **Agendamentos** - Criar e gerenciar consultas
-- 👤 **Perfil** - Suas informações pessoais
+- 🏠 **Dashboard Pessoal** - Visão geral dos seus dados
+- 📅 **Meus Agendamentos** - Visualizar suas consultas agendadas
+- 📋 **Solicitar Agendamento** - Agendar novas consultas
+- 👤 **Meu Perfil** - Editar suas informações pessoais
+- 📞 **Contato** - Informações para contato com o escritório
 
-#### **4. Testar como Usuário Comum:**
-1. 🚪 Faça logout (canto superior direito)
-2. 📝 Crie uma nova conta selecionando **"Usuário"**
-3. 👀 Compare as diferenças na interface (menos opções)
+#### **4. Funcionalidades para Testar:**
 
-#### **5. Funcionalidades para Testar:**
-
-**Como Admin:**
-- ✅ Adicionar um novo cliente
-- ✅ Cadastrar um advogado
-- ✅ Criar um agendamento
-- ✅ Ver gráficos no dashboard
-
-**Como Usuário:**
-- ✅ Ver seus agendamentos
-- ✅ Editar seu perfil
-- ✅ Acompanhar próximos compromissos
+**O que você pode fazer:**
+- ✅ **Visualizar seu dashboard** pessoal
+- ✅ **Solicitar agendamentos** com advogados
+- ✅ **Ver suas consultas** marcadas
+- ✅ **Editar seu perfil** e informações pessoais
+- ✅ **Acompanhar o status** dos seus processos
+- ✅ **Navegar pela interface** responsiva
 
 #### **🔍 Dicas de Navegação:**
 - 🎯 Use o **menu lateral** para navegar
@@ -189,7 +182,9 @@ Após criar conta **Admin**, você terá acesso a:
 
 #### **⚠️ Importante:**
 - 📧 **Use emails reais** para receber confirmações
+- 📬 **Verifique a caixa de SPAM** - emails de verificação podem ir para lixo eletrônico
 - 🔒 **Não use senhas pessoais** - é um ambiente de teste
+- 👤 **Apenas contas de usuário** estão disponíveis para teste (acesso admin é restrito)
 - 🧪 **Explore à vontade** - é seguro para testes
 
 ## 👥 Como Criar Contas (Desenvolvimento Local)
@@ -297,6 +292,12 @@ npm run lint         # Executa ESLint
 ### **Erro de Conexão com Database:**
 - ✅ Verifique a `DATABASE_URL` no `.env.local`
 - ✅ Confirme se o banco PostgreSQL está rodando
+
+### **Não recebeu email de verificação:**
+- 📬 **Verifique a caixa de SPAM/Lixo Eletrônico**
+- ⏰ Aguarde até 5 minutos para o email chegar
+- 📧 Verifique se o email foi digitado corretamente
+- 🔄 Tente reenviar o email de verificação
 
 ## 📞 Suporte
 
